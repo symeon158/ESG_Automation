@@ -59,7 +59,6 @@ This project reflects a unique blend of experience in data analytics, workforce 
 
 ## 💬 Contact
 📨 Connect on [LinkedIn](https://www.linkedin.com/in/symeon-papadopoulos-b242b1166/)  
-📧 Email: your.email@domain.com
 
 ---
 
