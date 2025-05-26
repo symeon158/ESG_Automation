@@ -47,11 +47,9 @@ This project was created to:
 - Assess managerial and executive representation by diversity groups
 - Export insights for ESG audits, board reports, or compliance documentation
   
-## 🔒 Data Privacy
-This application is designed for internal use. It has deployed:
-- On [Streamlit Cloud](https://esgautomation-6lucvjswyrkv3q5eadl9op.streamlit.app/OD)
-- On-premise behind corporate firewalls
-- Inside private Docker containers with login support
+## 🌐Deployment
+This application is designed for internal use. It has deployed on Streamlit Cloud!
+- Try it On [Streamlit Cloud](https://esgautomation-6lucvjswyrkv3q5eadl9op.streamlit.app/OD)
 
 ## 👨‍💼 About the Author
 **[Papadopoulos_Symeon]** — HR Data Analyst & ESG Reporting Lead.  
