@@ -796,13 +796,14 @@ if f'{COMP_PAGE_KEY}_df' in st.session_state:
                 analysis_df.rename(columns={
                     'ΜΙΚΤΕΣ ΑΠΟΔ': 'Median Salary (Excluding Max)'
                 }, inplace=True)
-
-                # Sort the DataFrame in descending order and reset the index
-                #analysis_df = analysis_df.sort_values(by='Median Salary (Excluding Max)', ascending=False).reset_index(drop=True)
                 
+                # Calculate median in EUR
                 analysis_df['Median Salary (Excluding Max) in EUR'] = analysis_df.apply(
                     lambda row: row['Median Salary (Excluding Max)'] * exchange_rates.get(row['Περιγραφή εταιρίας'], 1), axis=1
                 )
+                
+                # ✅ Sort by descending EUR value
+                analysis_df = analysis_df.sort_values(by='Median Salary (Excluding Max) in EUR', ascending=False).reset_index(drop=True)
 
 
                 # Calculate the top 10% employees for 2024
