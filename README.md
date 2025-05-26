@@ -28,10 +28,10 @@ This project was created to:
 - **Deployment:** [Streamlit Community Cloud](https://streamlit.io/cloud)
 
 ## 📁 Project Structure
-├── ESG_Analysis.py             # Main ESG dashboard with headcount and turnover
-├── Comp&Ben.py                 # Compensation, pay gap, and contract type analysis
+├── ESG_Analysis.py             # Pages setup
+├── Comp&Ben.py                 # Salary & Turnover Analysis, Overall Gender Pay Gap, Remuneration Ratio, Turnover Analysis
 ├── OD.py                       # Organizational Development: Training & skills planning
-├── HR Data Analyst.py          # Holistic HR view: hires, departures, executive mapping
+├── HR Data Analyst.py          # Holistic HR view: headcount, hires, departures, executive mapping
 ├── requirements.txt            # Python dependencies
 ├── .streamlit/
 │   └── config.toml             # Optional: Theme and layout settings
@@ -40,7 +40,7 @@ This project was created to:
 
 
 ## 📊 Use Cases
-- Monitor monthly and annual headcount trends across divisions and departments
+- Monitor monthly and annual headcount trends across companies, divisions and departments
 - Analyze hires and departures, voluntary vs involuntary turnover
 - Compare contract types (e.g., full-time, part-time, temporary)
 - Evaluate training plan completions, segmenting by business unit and genderDetect gender pay gaps across grades and job titles
@@ -48,7 +48,7 @@ This project was created to:
 - Export insights for ESG audits, board reports, or compliance documentation
   
 ## 🔒 Data Privacy
-This application is designed for internal use. For enhanced data security, it can be deployed:
+This application is designed for internal use. It has deployed:
 - On [Streamlit Cloud](https://esgautomation-6lucvjswyrkv3q5eadl9op.streamlit.app/OD)
 - On-premise behind corporate firewalls
 - Inside private Docker containers with login support
