@@ -19,49 +19,13 @@ project_2_page = st.Page(
     title="Comp&Ben",
     icon="💵",
 )
-project_3_page = st.Page(
-    "views/L&D.py",
-    title="L&D",
-    icon="🏋️",
-)
-project_4_page = st.Page(
-    "views/ChatBot RAG.py",
-    title="ChatBot",
-    icon="🤖",
-)
 
 project_5_page = st.Page(
     "views/OD.py",
     title="OD",
     icon="🏋️",
 )
-project_6_page = st.Page(
-    "views/AI_Tabular.py",
-    title="AI Tabular",
-    icon="🤖",
-)
-project_7_page = st.Page(
-    "views/Sql_AI.py",
-    title="SQL AI",
-    icon="🤖",
-)
-project_8_page = st.Page(
-    "views/Graph_RAG.py",
-    title="ChatBot Graph_RAG",
-    icon="🤖",
-)
 
-project_9_page = st.Page(
-    "views/aggrid.py",
-    title="Aggrid_St",
-    icon="💻",
-)
-
-project_10_page = st.Page(
-    "views/chatbot.py",
-    title="ChatBot_RAG_LLM",
-    icon="🤖",
-)
 
 
 # --- NAVIGATION SETUP [WITHOUT SECTIONS] ---
@@ -71,7 +35,7 @@ project_10_page = st.Page(
 pg = st.navigation(
     {
         "Info": [about_page],
-        "Projects": [project_1_page, project_2_page, project_5_page, project_9_page,  project_4_page, project_6_page],
+        "Projects": [project_1_page, project_2_page, project_5_page],
     }
 )
 
