@@ -54,8 +54,8 @@ def load_and_preprocess_data(uploaded_file):
                 print(f"Error with column {col}: {e}")
     
     # Load Contracts.csv
-    contracts_path = r'C:\Users\sy.papadopoulos\OneDrive - Alumil S.A\Desktop\Esg Group\Contacts.csv'
-    contracts_df = pd.read_csv(contracts_path, encoding='iso-8859-7', delimiter=';')
+    # contracts_path = r'C:\Users\sy.papadopoulos\OneDrive - Alumil S.A\Desktop\Esg Group\Contacts.csv'
+    # contracts_df = pd.read_csv(contracts_path, encoding='iso-8859-7', delimiter=';')
 
     # Ensure matching columns are strings
     df['Αριθμός μητρώου'] = df['Αριθμός μητρώου'].astype(str).str.strip()
