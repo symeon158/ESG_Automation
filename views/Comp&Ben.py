@@ -698,14 +698,21 @@ if f'{COMP_PAGE_KEY}_df' in st.session_state:
 #             st.write(headcount_Grouped_table)
 
 
-        # Heatmap visualization
+        # Force aggregation only by company name
+        headcount_company_table = df.groupby('Περιγραφή εταιρίας')[
+            [col for col in df.columns if col.startswith(str(year))]
+        ].sum().reset_index()
+        
+        # Create the heatmap
         fig = px.imshow(
-            headcount_table.set_index('Περιγραφή εταιρίας').T,
+            headcount_company_table.set_index('Περιγραφή εταιρίας').T,
             labels={'x': 'Company', 'y': 'Month', 'color': 'Headcount'},
-            title='Monthly Headcount by Company (2024)',
+            title=f'Monthly Headcount by Company ({year})',
             color_continuous_scale='Blues'
         )
+        
         st.plotly_chart(fig)
+
 
     with tab2:
         #st.header("Salary & Turnover Analysis")
