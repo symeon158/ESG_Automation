@@ -74,7 +74,7 @@ def load_and_preprocess_data(main_file, contracts_file):
     df['Departure Year'] = df['Ημ/νία αποχώρησης'].dt.year
     return df
 
-st.set_page_config(layout="wide", page_title="HR Data Analyst App")
+
 
 st.markdown("## 📊 HR Data Analyst Dashboard")
 
