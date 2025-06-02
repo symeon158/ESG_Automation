@@ -2,7 +2,7 @@
 
 ## 🔍 Overview
 The **ESG Automation Dashboard** is a powerful, data-driven Streamlit application designed to automate and centralize Environmental, Social, and Governance (ESG) reporting within HR. This tool enables dynamic analysis of key ESG metrics like headcount, turnover, contract types, gender representation, compensation trends, and executive roles—empowering HR teams with strategic, real-time insights.
-- 👉 Use the App [Streamlit Cloud](https://esgautomation-6lucvjswyrkv3q5eadl9op.streamlit.app/OD)
+- 👉 Use the App [ESG_Automation](https://esgautomation-6lucvjswyrkv3q5eadl9op.streamlit.app/OD)
 
 ## 🎯 Purpose
 This project was created to:
