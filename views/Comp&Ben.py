@@ -44,11 +44,21 @@ def load_and_preprocess_data(uploaded_file):
         df['Ονομαστικός μισθός'] = pd.to_numeric(df['Ονομαστικός μισθός'], errors='coerce')
 
 
-    # Add conditional logic for salary calculation based on "Περιγραφή Σύμβασης"
+    # Define all day-rate contract types
+    day_rate_contracts = {
+        'ΑΛΜ - ΗΜΕΡΟΜΙΣΘΙΟΙ',
+        'ΜΕΤΑΛΛΟΥ ΗΜΕΡΟΜΙΣΘΙΟΙ 1Η ΚΑΤΗΓΟΡΙΑ',
+        'ΜΕΤΑΛΛΟΥ ΗΜΕΡΟΜΙΣΘΙΟΙ 2Η ΚΑΤΗΓΟΡΙΑ'
+    }
+    
+    # Multiply nominal salary ×26 only for those
     df['Ονομαστικός μισθός'] = df.apply(
-        lambda row: row['Ονομαστικός μισθός'] * 26 if row['Περιγραφή Σύμβασης'] == 'ΑΛΜ - ΗΜΕΡΟΜΙΣΘΙΟΙ' else row['Ονομαστικός μισθός'],
+        lambda row: row['Ονομαστικός μισθός'] * 26
+        if str(row.get('Περιγραφή Σύμβασης', '')).strip().upper() in day_rate_contracts
+        else row['Ονομαστικός μισθός'],
         axis=1
     )
+
    
     df['Hire Year'] = df['Ημ/νία πρόσληψης'].dt.year
     df['Departure Year'] = df['Ημ/νία αποχώρησης'].dt.year
@@ -1016,4 +1026,5 @@ if f'{COMP_PAGE_KEY}_df' in st.session_state:
 
 else:
     st.write('Please upload a CSV file to proceed.')
+
 
