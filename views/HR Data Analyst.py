@@ -53,15 +53,22 @@ def load_and_preprocess_data(uploaded_file):
     df['Ημ/νία γέννησης'] = pd.to_datetime(df['Ημ/νία γέννησης'], format='%d/%m/%Y', errors='coerce')
     df['Ημ/νία αποχώρησης'] = pd.to_datetime(df['Ημ/νία αποχώρησης'], format='%d/%m/%Y', errors='coerce')
     df['Ημ/νία πρόσληψης'] = pd.to_datetime(df['Ημ/νία πρόσληψης'], format='%d/%m/%Y', errors='coerce')
-    df.loc[df['Αριθμός μητρώου'] == '2040258', 'Ημ/νία πρόσληψης'] = pd.Timestamp('2024-12-24')
-    df.loc[df['Αριθμός μητρώου'] == '2170120', 'Ημ/νία γέννησης'] = pd.Timestamp('1991-02-12')
-    df.loc[df['Αριθμός μητρώου'] == '2170071', 'Ημ/νία γέννησης'] = pd.Timestamp('1984-05-12')
-    df.loc[df['Αριθμός μητρώου'] == '2170073', 'Ημ/νία γέννησης'] = pd.Timestamp('1990-12-02')
-    df.loc[df['Αριθμός μητρώου'] == '2170091', 'Ημ/νία γέννησης'] = pd.Timestamp('1995-12-22')
-    df.loc[df['Αριθμός μητρώου'] == '2170116', 'Ημ/νία γέννησης'] = pd.Timestamp('1991-10-06')
+    
 
     df['Hire Year'] = df['Ημ/νία πρόσληψης'].dt.year
     df['Departure Year'] = df['Ημ/νία αποχώρησης'].dt.year
+    
+    # Rename "Κωδικός εργαζόμενου" to "Αριθμός μητρώου" if it exists
+    if 'Κωδικός εργαζόμενου' in df.columns and 'Αριθμός μητρώου' not in df.columns:
+        df = df.rename(columns={'Κωδικός εργαζόμενου': 'Αριθμός μητρώου'})
+    
+    # Translate contract type values in "Σύμβαση"
+    if 'Σύμβαση' in df.columns:
+        df['Σύμβαση'] = df['Σύμβαση'].replace({
+            'PERMANENT': 'ΑΟΡΙΣΤΟΥ ΧΡΟΝΟΥ',
+            'TEMPORARY': 'ΟΡΙΣΜΕΝΟΥ ΧΡΟΝΟΥ'
+        })
+        
     return df
 
 # Initialize session state
@@ -665,3 +672,4 @@ if st.session_state.df is not None:
 
 else:
     st.write('Please upload a CSV file to proceed.')
+
