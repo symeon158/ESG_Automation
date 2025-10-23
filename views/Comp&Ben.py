@@ -30,10 +30,21 @@ def load_and_preprocess_data(uploaded_file):
                 break
 
                 
-    df['Αριθμός μητρώου'] = df['Αριθμός μητρώου'].astype(str)
+    
     df['Ημ/νία γέννησης'] = pd.to_datetime(df['Ημ/νία γέννησης'], format='%d/%m/%Y', errors='coerce')
     df['Ημ/νία αποχώρησης'] = pd.to_datetime(df['Ημ/νία αποχώρησης'], format='%d/%m/%Y', errors='coerce')
     df['Ημ/νία πρόσληψης'] = pd.to_datetime(df['Ημ/νία πρόσληψης'], format='%d/%m/%Y', errors='coerce')
+
+    # Rename "Κωδικός εργαζόμενου" to "Αριθμός μητρώου" if it exists
+    if 'Κωδικός εργαζόμενου' in df.columns and 'Αριθμός μητρώου' not in df.columns:
+        df = df.rename(columns={'Κωδικός εργαζόμενου': 'Αριθμός μητρώου'})
+    df['Αριθμός μητρώου'] = df['Αριθμός μητρώου'].astype(str)
+    # Translate contract type values in "Σύμβαση"
+    if 'Σύμβαση' in df.columns:
+        df['Σύμβαση'] = df['Σύμβαση'].replace({
+            'PERMANENT': 'ΑΟΡΙΣΤΟΥ ΧΡΟΝΟΥ',
+            'TEMPORARY': 'ΟΡΙΣΜΕΝΟΥ ΧΡΟΝΟΥ'
+        })
    
     if df['Ονομαστικός μισθός'].dtype == 'object':
         df['Ονομαστικός μισθός'] = pd.to_numeric(
@@ -1026,5 +1037,6 @@ if f'{COMP_PAGE_KEY}_df' in st.session_state:
 
 else:
     st.write('Please upload a CSV file to proceed.')
+
 
 
