@@ -49,11 +49,7 @@ def load_and_preprocess_data(uploaded_file):
         lambda row: row['Ονομαστικός μισθός'] * 26 if row['Περιγραφή Σύμβασης'] == 'ΑΛΜ - ΗΜΕΡΟΜΙΣΘΙΟΙ' else row['Ονομαστικός μισθός'],
         axis=1
     )
-    df.loc[df['Αριθμός μητρώου'] == '2040258', 'Ημ/νία πρόσληψης'] = pd.Timestamp('2024-12-24')
-    df.loc[df['Αριθμός μητρώου'] == '2020606', 'Ημ/νία πρόσληψης'] = pd.Timestamp('')
-    df.loc[df['Αριθμός μητρώου'] == '2040153', 'Ημ/νία πρόσληψης'] = pd.Timestamp('2022-01-22')
-    df.loc[df['Αριθμός μητρώου'] == '2120183', 'ΜΙΚΤΕΣ ΑΠΟΔ'] = 104832
-    df.loc[df['Αριθμός μητρώου'] == '2120183', 'Ονομαστικός μισθός'] = 8736
+   
     df['Hire Year'] = df['Ημ/νία πρόσληψης'].dt.year
     df['Departure Year'] = df['Ημ/νία αποχώρησης'].dt.year
 
@@ -1020,3 +1016,4 @@ if f'{COMP_PAGE_KEY}_df' in st.session_state:
 
 else:
     st.write('Please upload a CSV file to proceed.')
+
