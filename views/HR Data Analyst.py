@@ -120,16 +120,23 @@ if st.session_state.df is not None:
         df['Ονομαστικός μισθός'] = pd.to_numeric(df['Ονομαστικός μισθός'], errors='coerce')
 
     # Salary adjustment
+    # Define all day-rate contract types
+    day_rate_contracts = {
+        'ΑΛΜ - ΗΜΕΡΟΜΙΣΘΙΟΙ',
+        'ΜΕΤΑΛΛΟΥ ΗΜΕΡΟΜΙΣΘΙΟΙ 1Η ΚΑΤΗΓΟΡΙΑ',
+        'ΜΕΤΑΛΛΟΥ ΗΜΕΡΟΜΙΣΘΙΟΙ 2Η ΚΑΤΗΓΟΡΙΑ'
+    }
+    
+    # Multiply nominal salary ×26 only for those
     df['Ονομαστικός μισθός'] = df.apply(
-        lambda row: row['Ονομαστικός μισθός'] * 26 if row['Περιγραφή Σύμβασης'] == 'ΑΛΜ - ΗΜΕΡΟΜΙΣΘΙΟΙ' else row['Ονομαστικός μισθός'],
+        lambda row: row['Ονομαστικός μισθός'] * 26
+        if str(row.get('Περιγραφή Σύμβασης', '')).strip().upper() in day_rate_contracts
+        else row['Ονομαστικός μισθός'],
         axis=1
     )
 
-    # Your custom updates
-    df.loc[df['Αριθμός μητρώου'] == '2040258', 'Ημ/νία πρόσληψης'] = pd.Timestamp('2024-12-24')
-    df.loc[df['Αριθμός μητρώου'] == '2040153', 'Ημ/νία πρόσληψης'] = pd.Timestamp('2022-01-22')
-    df.loc[df['Αριθμός μητρώου'] == '2120183', 'ΜΙΚΤΕΣ ΑΠΟΔ'] = 104832
-    df.loc[df['Αριθμός μητρώου'] == '2120183', 'Ονομαστικός μισθός'] = 8736
+
+    
 
     # Replace dots with commas in numeric columns before saving
     df_to_save = df.copy()
@@ -672,5 +679,6 @@ if st.session_state.df is not None:
 
 else:
     st.write('Please upload a CSV file to proceed.')
+
 
 
