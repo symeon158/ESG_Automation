@@ -49,11 +49,11 @@ def load_and_preprocess_data(uploaded_file):
             except Exception as e:
                 print(f"Error with column {col}: {e}")
 
-    df['Αριθμός μητρώου'] = df['Αριθμός μητρώου'].astype(str)
+   
     df['Ημ/νία γέννησης'] = pd.to_datetime(df['Ημ/νία γέννησης'], format='%d/%m/%Y', errors='coerce')
     df['Ημ/νία αποχώρησης'] = pd.to_datetime(df['Ημ/νία αποχώρησης'], format='%d/%m/%Y', errors='coerce')
     df['Ημ/νία πρόσληψης'] = pd.to_datetime(df['Ημ/νία πρόσληψης'], format='%d/%m/%Y', errors='coerce')
-    
+     
 
     df['Hire Year'] = df['Ημ/νία πρόσληψης'].dt.year
     df['Departure Year'] = df['Ημ/νία αποχώρησης'].dt.year
@@ -61,7 +61,7 @@ def load_and_preprocess_data(uploaded_file):
     # Rename "Κωδικός εργαζόμενου" to "Αριθμός μητρώου" if it exists
     if 'Κωδικός εργαζόμενου' in df.columns and 'Αριθμός μητρώου' not in df.columns:
         df = df.rename(columns={'Κωδικός εργαζόμενου': 'Αριθμός μητρώου'})
-    
+    df['Αριθμός μητρώου'] = df['Αριθμός μητρώου'].astype(str)
     # Translate contract type values in "Σύμβαση"
     if 'Σύμβαση' in df.columns:
         df['Σύμβαση'] = df['Σύμβαση'].replace({
@@ -672,4 +672,5 @@ if st.session_state.df is not None:
 
 else:
     st.write('Please upload a CSV file to proceed.')
+
 
