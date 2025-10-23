@@ -158,7 +158,7 @@ if st.session_state.df is not None:
 
     # Save locally with commas instead of dots
     local_save_path = r"C:\Users\sy.papadopoulos\OneDrive - Alumil S.A\Desktop\Esg Group"
-    filename = "ESG 2024.csv"
+    filename = "ESG 2025.csv"
     full_path = os.path.join(local_save_path, original_filename)
 
     if not os.path.exists(local_save_path):
@@ -182,8 +182,8 @@ if st.session_state.df is not None:
     exclude_input = st.sidebar.text_area('Exclude Set (comma-separated)', '1015791, 1015535, 1015956, 1015307, 1016492, 1017069, 1017070, 1017501, 1017508, 1100096, 1200014, 1200030')
     exclude_set = set(exclude_input.split(', '))
     year_input = st.sidebar.number_input('Year', value=2025, min_value=2000, max_value=2100, step=1)
-    year_input_2 = st.sidebar.number_input('Year for Hires & Departures', value=2024, min_value=2000, max_value=2100, step=1)
-    selected_date = st.sidebar.date_input("Select a reference date for age group", value=pd.to_datetime('2024-12-31'))
+    year_input_2 = st.sidebar.number_input('Year for Hires & Departures', value=2025, min_value=2000, max_value=2100, step=1)
+    selected_date = st.sidebar.date_input("Select a reference date for age group", value=pd.to_datetime('2025-12-31'))
     # Sidebar Input for Exclusion
     exclude_input_departures = st.sidebar.text_area('Exclude Set for Departures (comma-separated)', 
     "1015768, 1015903, 1016610, 1017066, 1017182, "
@@ -228,10 +228,10 @@ if st.session_state.df is not None:
     ~df['Αριθμός μητρώου'].isin(exclude_set) &
     
     # Ensure 'Ημ/νία πρόσληψης' is not null and less than 'year_input'
-    (df['Ημ/νία πρόσληψης'].notna() & (df['Ημ/νία πρόσληψης'].dt.year < year_input)) &
+    (df['Ημ/νία πρόσληψης'].notna() & (df['Ημ/νία πρόσληψης'].dt.year <= year_input)) &
 
     # 'Ημ/νία αποχώρησης' is either null or its year is less than 'year_input'
-    (df['Ημ/νία αποχώρησης'].isna() | (df['Ημ/νία αποχώρησης'].dt.year >= year_input))
+    (df['Ημ/νία αποχώρησης'].isna() | (df['Ημ/νία αποχώρησης'].dt.year > year_input))
 ]
 
         total_count = filtered_df.shape[0]
@@ -679,6 +679,7 @@ if st.session_state.df is not None:
 
 else:
     st.write('Please upload a CSV file to proceed.')
+
 
 
 
