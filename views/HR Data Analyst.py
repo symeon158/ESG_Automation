@@ -154,7 +154,7 @@ if st.session_state.df is not None:
         mime="text/csv",
     )
 
-    original_filename = getattr(st.session_state.uploaded_file, 'name', 'ESG_2024.csv')
+    original_filename = getattr(st.session_state.uploaded_file, 'name', 'ESG_2025.csv')
 
     # Save locally with commas instead of dots
     local_save_path = r"C:\Users\sy.papadopoulos\OneDrive - Alumil S.A\Desktop\Esg Group"
@@ -406,11 +406,11 @@ if st.session_state.df is not None:
                     return 'Trainee'
                 elif 'director' in title:
                     return 'Director'
-                elif 'commercial unit developer' in title and grade > 8:
+                elif 'commercial unit developer' in title and grade > 16:
                     return 'Manager'
-                elif ('manager' in title or 'head' in title or 'ceo' in title) and grade >= 10:
+                elif ('manager' in title or 'head' in title or 'ceo' in title) and grade >= 18:
                     return 'Director'
-                elif ('manager' in title or 'head' in title or 'supervisor' in title or 'lead' in title or 'executive' in title) and grade > 6:
+                elif ('manager' in title or 'head' in title or 'supervisor' in title or 'lead' in title or 'executive' in title) and grade > 13:
                     return 'Manager'
                 elif prop == 'administrative':
                     return 'Office Worker'
@@ -472,12 +472,12 @@ if st.session_state.df is not None:
 
 
         
-        # Additional Table: Group by specific columns where GRADE >= 10
+        # Additional Table: Group by specific columns where GRADE >= 18
         if 'GRADE' in filtered_df.columns and 'Ονομα' in filtered_df.columns:
             filtered_df['GRADE'] = pd.to_numeric(filtered_df['GRADE'], errors='coerce')
 
-            # Filter GRADE >= 10
-            grade_filtered_df = filtered_df[filtered_df['GRADE'] >= 10]
+            # Filter GRADE >= 18
+            grade_filtered_df = filtered_df[filtered_df['GRADE'] >= 18]
 
             # Group and count
             group_table = (
@@ -508,7 +508,7 @@ if st.session_state.df is not None:
                     <div style="background-color: #f9f9f9; padding: 15px 25px; border-left: 5px solid #007BFF;
                                 border-radius: 8px; margin-top: 20px; margin-bottom: 10px;
                                 font-family: 'Segoe UI', sans-serif;">
-                        <h3 style="color: #007BFF; margin: 0;">👔 High Executives (GRADE ≥ 10)</h3>
+                        <h3 style="color: #007BFF; margin: 0;">👔 High Executives (GRADE ≥ 18)</h3>
                         <p style="color: #555; margin: 5px 0 0;">Overview of senior staff by company, gender, and role</p>
                     </div>
                     """, unsafe_allow_html=True)
@@ -679,6 +679,7 @@ if st.session_state.df is not None:
 
 else:
     st.write('Please upload a CSV file to proceed.')
+
 
 
 
