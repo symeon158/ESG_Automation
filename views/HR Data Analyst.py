@@ -408,7 +408,7 @@ if st.session_state.df is not None:
                     return 'Director'
                 elif 'commercial unit developer' in title and grade > 16:
                     return 'Manager'
-                elif ('manager' in title or 'head' in title or 'ceo' in title) and grade >= 18:
+                elif ('manager' in title or 'head' in title or 'ceo' in title) and grade > 19:
                     return 'Director'
                 elif ('manager' in title or 'head' in title or 'supervisor' in title or 'lead' in title or 'executive' in title) and grade > 13:
                     return 'Manager'
@@ -679,6 +679,7 @@ if st.session_state.df is not None:
 
 else:
     st.write('Please upload a CSV file to proceed.')
+
 
 
 
