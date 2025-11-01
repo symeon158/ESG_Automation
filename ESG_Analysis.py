@@ -20,6 +20,12 @@ project_2_page = st.Page(
     icon="💵",
 )
 
+project_7_page = st.Page(
+    "views/Manpower.py",
+    title="Manpower",
+    icon="🧍",
+)
+
 project_5_page = st.Page(
     "views/OD.py",
     title="OD",
@@ -35,7 +41,8 @@ project_5_page = st.Page(
 pg = st.navigation(
     {
         "Info": [about_page],
-        "Projects": [project_1_page, project_2_page, project_5_page],
+        "ESG": [project_1_page, project_2_page, project_5_page],
+        "Manpower": [project_7_page],
     }
 )
 
@@ -47,3 +54,4 @@ st.sidebar.markdown("Created with ❤️ by [Symeon Papadopoulos](https://www.li
 
 # --- RUN NAVIGATION ---
 pg.run()
+
