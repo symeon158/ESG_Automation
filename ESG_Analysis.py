@@ -1,7 +1,7 @@
 import streamlit as st
 
 
-st.set_page_config(layout="centered")
+st.set_page_config(layout="wide")
 # --- PAGE SETUP ---
 about_page = st.Page(
     "views/about ESG.py",
@@ -54,5 +54,6 @@ st.sidebar.markdown("Created with ❤️ by [Symeon Papadopoulos](https://www.li
 
 # --- RUN NAVIGATION ---
 pg.run()
+
 
 
