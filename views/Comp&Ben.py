@@ -2,7 +2,12 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import math
+import io
 
+
+
+# Allow larger styled tables (set it above your largest expected table)
+pd.set_option("styler.render.max_elements", 1_500_000)  # e.g., 1.5M
 
 # Unique key for the Compensation & Benefits page
 COMP_PAGE_KEY = 'Comp_Ben'
@@ -124,7 +129,7 @@ if f'{COMP_PAGE_KEY}_df' in st.session_state:
         "Select Year Range for Monthly Headcount Tab", min_value=2020, max_value=2030, value=(2024, 2025), key="year_range_slider"
     )
 
-    year = st.sidebar.slider("Select Year for Salary & Turnover Analysis Tab", min_value=2020, max_value=2030, value=2024, key="year_slider")
+    year = st.sidebar.slider("Select Year for Salary & Turnover Analysis Tab", min_value=2020, max_value=2030, value=2025, key="year_slider")
 
 
     # 🔻 Dynamic exchange rate inputs (INSERT THIS HERE)
@@ -143,12 +148,12 @@ if f'{COMP_PAGE_KEY}_df' in st.session_state:
             exchange_rates[company] = st.number_input(
                 f"{company}", min_value=0.0, format="%.4f", step=0.0001,
                 value={
-                    'ALUMIL YU INDUSTRY SA': 0.008546,
-                    'ALUMIL ALBANIA Sh.P.K': 0.01023,
-                    'ALUMIL ROM INDUSTRY SA': 0.2010,
-                    'ALUMIL MISR FOR TRADING S.A.E.': 0.019,
-                    'ALPRO VLASENICA A.D.': 0.5142,
-                    'ALUMIL MIDDLE EAST JLT': 0.25
+                    'ALUMIL YU INDUSTRY SA': 0.0085,
+                    'ALUMIL ALBANIA Sh.P.K': 0.0103,
+                    'ALUMIL ROM INDUSTRY SA': 0.1968,
+                    'ALUMIL MISR FOR TRADING S.A.E.': 0.0176,
+                    'ALPRO VLASENICA A.D.': 0.5100,
+                    'ALUMIL MIDDLE EAST JLT': 0.2300
                 }.get(company, 1.0)
             )
 
@@ -157,15 +162,11 @@ if f'{COMP_PAGE_KEY}_df' in st.session_state:
 
     # Sidebar input for Exclusion - Active Employees
     exclude_input = st.sidebar.text_area("Exclude Active IDs (comma-separated)", 
-        "1016492, 1017069, 1017070, 1100096, 1200014, 1200030, 1015535, 1015307, 1015791, 1015956")
+        "")
 
     # Sidebar input for Exclusion - Departures
     exclude_departures_input = st.sidebar.text_area("Exclude Departures IDs (comma-separated)", 
-        "1015768, 1015903, 1016610, 1017066, 1017182, "
-        "1017247, 1017255, 1018277, 1011285, 1017525, "
-        "1015710, 1017200, 1017346, 1017471, 1017475, "
-        "1017476, 1017477, 1017478, 1017479, 1017480, 1017482, "
-        "1017483, 1017484, 1017485, 1017512, 1017668, 1017622, 1017578")
+        "")
 
     # Convert input into a set of IDs (strip spaces to avoid errors)
     exclude_ids = set(map(str.strip, exclude_input.split(',')))
@@ -179,7 +180,7 @@ if f'{COMP_PAGE_KEY}_df' in st.session_state:
         df = df[df['Ονομαστικός μισθός'] > 0]  # Exclude zero salaries
 
         start_of_year = pd.Timestamp(f"{year}-01-01")
-        end_of_year = pd.Timestamp(f"{year}-12-31")
+        end_of_year = pd.Timestamp(f"{year}-09-30")
 
         df_filtered = df[
             (df['Ημ/νία πρόσληψης'] <= end_of_year) & 
@@ -204,7 +205,7 @@ if f'{COMP_PAGE_KEY}_df' in st.session_state:
         df = df.dropna(subset=['Ονομαστικός μισθός'])  # Remove null salary values
         df = df[df['Ονομαστικός μισθός'] > 0]  # Exclude zero salaries
         start_of_2024 = pd.Timestamp(f"{year}-01-01")
-        end_of_2024 = pd.Timestamp(f"{year}-12-31")
+        end_of_2024 = pd.Timestamp(f"{year}-09-30")
         df_2024 = df[
             (df['Ημ/νία πρόσληψης'] <= end_of_2024) & 
             ((df['Ημ/νία αποχώρησης'].isna()) | (df['Ημ/νία αποχώρησης'] >=  start_of_2024))
@@ -227,23 +228,17 @@ if f'{COMP_PAGE_KEY}_df' in st.session_state:
         return pd.DataFrame(results)
     
     def calculate_overall_annual_remuneration_ratio(df, year, exchange_rates):
-        # exchange_rates = {
-        #     'ALUMIL YU INDUSTRY SA': 0.008546,
-        #     'ALUMIL ALBANIA Sh.P.K': 0.01023,
-        #     'ALUMIL ROM INDUSTRY SA': 0.2010,
-        #     'ALUMIL MISR FOR TRADING S.A.E.': 0.019,
-        #     'ALPRO VLASENICA A.D.': 0.5142,
-        #     'ALUMIL MIDDLE EAST JLT': 0.25
-        # }
+       
 
         # Make a local copy to avoid modifying original df
         df_local = df.copy()
-
         # Safe conversion
         df_local['ΜΙΚΤΕΣ ΑΠΟΔ'] = pd.to_numeric(
             df_local['ΜΙΚΤΕΣ ΑΠΟΔ'].apply(lambda x: str(x).replace(',', '.')),
             errors='coerce'
         )
+        df_local = df_local.dropna(subset=['ΜΙΚΤΕΣ ΑΠΟΔ'])  # Remove null salary values
+        df_local = df_local[df_local['ΜΙΚΤΕΣ ΑΠΟΔ'] > 0]  # Exclude zero salaries
 
         # Convert to EUR
         df_local['Annual Salary EUR'] = df_local.apply(
@@ -251,6 +246,7 @@ if f'{COMP_PAGE_KEY}_df' in st.session_state:
             if pd.notna(row['ΜΙΚΤΕΣ ΑΠΟΔ']) else None,
             axis=1
         )
+        df_local['Annual Salary EUR'] = df_local['Annual Salary EUR'].round(0).astype('Int64')
 
         # Filter for active employees during the year
         start_of_year = pd.Timestamp(f"{year}-01-01")
@@ -269,7 +265,7 @@ if f'{COMP_PAGE_KEY}_df' in st.session_state:
         else:
             annual_rem_ratio = None
 
-        return annual_rem_ratio
+        return annual_rem_ratio, df_filtered
 
 
 
@@ -574,7 +570,7 @@ if f'{COMP_PAGE_KEY}_df' in st.session_state:
     with tab1:
         #st.write("Column Names:", df.columns)
         # Grouping options for the user
-        groupby_options = ['Περιγραφή εταιρίας', 'Division', 'Department']
+        groupby_options = ['Περιγραφή εταιρίας', 'Division', 'Department', 'Περιγραφή Θέσης Εργασίας']
         selected_groupby = st.multiselect("🔀 Group by:", groupby_options, default=['Περιγραφή εταιρίας'])     
 
         # Compute monthly headcount for multiple years
@@ -628,9 +624,6 @@ if f'{COMP_PAGE_KEY}_df' in st.session_state:
                 numeric_cols = headcount_table.select_dtypes(include=['number']).columns
                 st.dataframe(headcount_table.style.format({col: "{:,.0f}" for col in numeric_cols}))
 
-        import io
-        import pandas as pd
-        import streamlit as st
 
         def export_and_display_unpivoted_headcount(df, start_year, end_year):
             # 1. Detect month columns
@@ -715,21 +708,14 @@ if f'{COMP_PAGE_KEY}_df' in st.session_state:
 #             st.write(headcount_Grouped_table)
 
 
-        # Force aggregation only by company name
-        headcount_company_table = df.groupby('Περιγραφή εταιρίας')[
-            [col for col in df.columns if col.startswith(str(year))]
-        ].sum().reset_index()
-        
-        # Create the heatmap
+        # Heatmap visualization
         fig = px.imshow(
-            headcount_company_table.set_index('Περιγραφή εταιρίας').T,
+            headcount_table.set_index('Περιγραφή εταιρίας').T,
             labels={'x': 'Company', 'y': 'Month', 'color': 'Headcount'},
-            title=f'Monthly Headcount by Company ({year})',
+            title='Monthly Headcount by Company',
             color_continuous_scale='Blues'
         )
-        
         st.plotly_chart(fig)
-
 
     with tab2:
         #st.header("Salary & Turnover Analysis")
@@ -773,6 +759,18 @@ if f'{COMP_PAGE_KEY}_df' in st.session_state:
                 st.subheader(f"🎯 Overall Gender Pay Gap & Remuneration Ratio for {year}")
                 ratio = calculate_overall_annual_remuneration_ratio(df, year, exchange_rates)
                 gender_pay_gap = calculate_overall_gender_pay_gap(df, year)
+                ratio, filtered_df = calculate_overall_annual_remuneration_ratio(df, year, exchange_rates)
+                gender_pay_gap = calculate_overall_gender_pay_gap(df, year)
+
+                st.caption(f"✅ Included {len(filtered_df)} employees with valid salaries for the remuneration ratio.")
+                with st.expander("🔎 View filtered rows used for the remuneration ratio"):
+                    cols_to_show = [
+                        'Περιγραφή εταιρίας','Αριθμός μητρώου','Επώνυμο','Ονομα',
+                        'ΜΙΚΤΕΣ ΑΠΟΔ','Annual Salary EUR','Ημ/νία πρόσληψης','Ημ/νία αποχώρησης'
+                    ]
+                    cols_to_show = [c for c in cols_to_show if c in filtered_df.columns]
+                    st.dataframe(filtered_df[cols_to_show])
+
 
                 col1, col2 = st.columns(2)
 
@@ -820,14 +818,13 @@ if f'{COMP_PAGE_KEY}_df' in st.session_state:
                 analysis_df.rename(columns={
                     'ΜΙΚΤΕΣ ΑΠΟΔ': 'Median Salary (Excluding Max)'
                 }, inplace=True)
+
+                # Sort the DataFrame in descending order and reset the index
+                #analysis_df = analysis_df.sort_values(by='Median Salary (Excluding Max)', ascending=False).reset_index(drop=True)
                 
-                # Calculate median in EUR
                 analysis_df['Median Salary (Excluding Max) in EUR'] = analysis_df.apply(
                     lambda row: row['Median Salary (Excluding Max)'] * exchange_rates.get(row['Περιγραφή εταιρίας'], 1), axis=1
                 )
-                
-                # ✅ Sort by descending EUR value
-                analysis_df = analysis_df.sort_values(by='Median Salary (Excluding Max) in EUR', ascending=False).reset_index(drop=True)
 
 
                 # Calculate the top 10% employees for 2024
@@ -1037,6 +1034,3 @@ if f'{COMP_PAGE_KEY}_df' in st.session_state:
 
 else:
     st.write('Please upload a CSV file to proceed.')
-
-
-
