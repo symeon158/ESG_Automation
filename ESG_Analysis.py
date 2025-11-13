@@ -42,7 +42,7 @@ pg = st.navigation(
     {
         "Info": [about_page],
         "ESG": [project_1_page, project_2_page, project_5_page],
-        "Manpower": [project_7_page],
+        "Manpower Budget": [project_7_page],
     }
 )
 
@@ -54,4 +54,5 @@ st.sidebar.markdown("Created with ❤️ by [Symeon Papadopoulos](https://www.li
 
 # --- RUN NAVIGATION ---
 pg.run()
+
 
