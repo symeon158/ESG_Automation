@@ -45,13 +45,12 @@ manpower_info_page = st.Page(
 pg = st.navigation(
     {
         "Info": [about_page],
+        "Manpower Budget Info": [manpower_info_page],  # 👈 New top-level
         "ESG": [project_1_page, project_2_page, project_5_page],
-        "Manpower Budget": [
-            manpower_info_page,   # <--- NEW INFO PAGE
-            project_7_page        # existing manpower page
-        ],
+        "Manpower Budget": [project_7_page],
     }
 )
+
 
 # --- SHARED ON ALL PAGES ---
 st.sidebar.markdown(
@@ -60,4 +59,5 @@ st.sidebar.markdown(
 
 # --- RUN NAVIGATION ---
 pg.run()
+
 
