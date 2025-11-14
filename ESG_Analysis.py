@@ -6,7 +6,7 @@ st.set_page_config(layout="wide")
 about_page = st.Page(
     "views/about ESG.py",
     title="About ESG",
-    icon=":material/account_circle:",
+    icon="♻️",
     default=True,
 )
 
@@ -59,6 +59,7 @@ st.sidebar.markdown(
 
 # --- RUN NAVIGATION ---
 pg.run()
+
 
 
 
