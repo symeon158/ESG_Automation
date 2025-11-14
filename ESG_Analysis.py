@@ -47,11 +47,12 @@ pg = st.navigation(
         "Info": [about_page],
         "ESG": [project_1_page, project_2_page, project_5_page],
         "Manpower Budget": [
-            manpower_info_page,   # <--- NEW INFO PAGE
-            project_7_page        # existing manpower page
+            manpower_info_page,   # info page
+            project_7_page,       # main manpower app
         ],
     }
 )
+
 
 # --- SHARED ON ALL PAGES ---
 st.sidebar.markdown(
@@ -60,3 +61,4 @@ st.sidebar.markdown(
 
 # --- RUN NAVIGATION ---
 pg.run()
+
