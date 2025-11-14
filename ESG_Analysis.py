@@ -38,7 +38,7 @@ project_7_page = st.Page(
 manpower_info_page = st.Page(
     "views/Manpower Budget Info.py",     # create this file in /views/
     title="Manpower Budget Info",
-    icon="📘",
+    icon="🧍💼",
 )
 
 # --- NAVIGATION SETUP ---
@@ -59,5 +59,6 @@ st.sidebar.markdown(
 
 # --- RUN NAVIGATION ---
 pg.run()
+
 
 
