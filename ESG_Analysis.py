@@ -19,49 +19,20 @@ project_2_page = st.Page(
     title="Comp&Ben",
     icon="💵",
 )
-project_3_page = st.Page(
-    "views/Hierarchy.py",
-    title="Hierarchy",
-    icon="🗂️",
-)
-project_4_page = st.Page(
-    "views/ChatBot RAG.py",
-    title="ChatBot",
-    icon="🤖",
-)
+
 
 project_5_page = st.Page(
     "views/OD.py",
     title="OD",
     icon="🏋️",
 )
-project_6_page = st.Page(
-    "views/AI_Tabular.py",
-    title="AI Tabular",
-    icon="🤖",
-)
+
 project_7_page = st.Page(
     "views/Manpower.py",
     title="Manpower",
     icon="🧍",
 )
-project_8_page = st.Page(
-    "views/Graph_RAG.py",
-    title="ChatBot Graph_RAG",
-    icon="🤖",
-)
 
-project_9_page = st.Page(
-    "views/aggrid.py",
-    title="Aggrid_St",
-    icon="💻",
-)
-
-project_10_page = st.Page(
-    "views/ChatTabular.py",
-    title="Tabular_Chat",
-    icon="🤖",
-)
 
 
 # --- NAVIGATION SETUP [WITHOUT SECTIONS] ---
@@ -84,3 +55,4 @@ st.sidebar.markdown("Created with ❤️ by [Symeon Papadopoulos](https://www.li
 
 # --- RUN NAVIGATION ---
 pg.run()
+
