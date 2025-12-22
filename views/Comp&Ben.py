@@ -126,7 +126,7 @@ if f'{COMP_PAGE_KEY}_df' in st.session_state:
     df = st.session_state[f'{COMP_PAGE_KEY}_df']
     # Allow user to select start and end years for analysis
     start_year, end_year = st.sidebar.slider(
-        "Select Year Range for Monthly Headcount Tab", min_value=2020, max_value=2030, value=(2024, 2025), key="year_range_slider"
+        "Select Year Range for Monthly Headcount Tab", min_value=2019, max_value=2030, value=(2024, 2025), key="year_range_slider"
     )
 
     year = st.sidebar.slider("Select Year for Salary & Turnover Analysis Tab", min_value=2020, max_value=2030, value=2025, key="year_slider")
@@ -435,6 +435,27 @@ if f'{COMP_PAGE_KEY}_df' in st.session_state:
         results_df = pd.concat([results_df, totals], ignore_index=True)
 
         return results_df
+    
+
+    def aggregate_headcount_by_employee_and_month(df, start_year, end_year):
+        # Identify the columns for all selected months
+        month_cols = [col for col in df.columns if any(str(y) in col for y in range(start_year, end_year + 1))]
+        
+        # Define the fields to include
+        employee_fields = ['Περιγραφή εταιρίας', 'Division', 'Department', 'Περιγραφή Θέσης Εργασίας', 'Επώνυμο', 'Ονομα']
+        
+        # Ensure only columns present in the DataFrame are used
+        groupby_fields = [field for field in employee_fields if field in df.columns]
+        
+        # Group by employee identifying information and sum the monthly boolean/count columns
+        # The monthly columns contain boolean (True/False) values which sum up to 1 for True (present) and 0 for False (absent).
+        grouped = df.groupby(groupby_fields, dropna=False)[month_cols].sum().reset_index()
+        
+        # Convert month columns to Int64 to display as whole numbers (headcount of 0 or 1 per row)
+        for col in month_cols:
+            grouped[col] = grouped[col].astype('Int64')
+            
+        return grouped
 
     # Calculate start and end of period headcount for each company
     def calculate_headcount(df, year=year):
@@ -571,7 +592,7 @@ if f'{COMP_PAGE_KEY}_df' in st.session_state:
         #st.write("Column Names:", df.columns)
         # Grouping options for the user
         groupby_options = ['Περιγραφή εταιρίας', 'Division', 'Department', 'Περιγραφή Θέσης Εργασίας']
-        selected_groupby = st.multiselect("🔀 Group by:", groupby_options, default=['Περιγραφή εταιρίας'])     
+        selected_groupby = st.multiselect("🔀 Group by:", groupby_options, default=['Περιγραφή εταιρίας']) 	
 
         # Compute monthly headcount for multiple years
         df = calculate_monthly_headcount_year(df, start_year, end_year)
@@ -625,97 +646,118 @@ if f'{COMP_PAGE_KEY}_df' in st.session_state:
                 st.dataframe(headcount_table.style.format({col: "{:,.0f}" for col in numeric_cols}))
 
 
-        def export_and_display_unpivoted_headcount(df, start_year, end_year):
-            # 1. Detect month columns
-            month_cols = [col for col in df.columns if any(str(y) in col for y in range(start_year, end_year + 1))]
+            def export_and_display_unpivoted_headcount(df, start_year, end_year):
+                # 1. Detect month columns
+                month_cols = [col for col in df.columns if any(str(y) in col for y in range(start_year, end_year + 1))]
 
-            # 2. Melt/unpivot to long format
-            unpivoted_df = df.melt(
-                id_vars=[col for col in df.columns if col not in month_cols],
-                value_vars=month_cols,
-                var_name='Month',
-                value_name='Headcount'
-            )
+                # 2. Melt/unpivot to long format
+                unpivoted_df = df.melt(
+                    id_vars=[col for col in df.columns if col not in month_cols],
+                    value_vars=month_cols,
+                    var_name='Month',
+                    value_name='Headcount'
+                )
 
-            # 3. Show in Streamlit table
+                # 3. Show in Streamlit table
+                st.markdown(
+                    "<h4 style='color:#333;'>📄 Unpivoted Monthly Headcount Table (Long Format)</h4>",
+                    unsafe_allow_html=True
+                )
+                with st.expander(f'📋 View Monthly Headcount Table Unpivoted ({start_year} - {end_year}):'):
+                    st.dataframe(unpivoted_df.style.format({'Headcount': '{:,.0f}'}))
+
+                # 4. Export to Excel
+                output = io.BytesIO()
+                with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+                    unpivoted_df.to_excel(writer, index=False, sheet_name='Unpivoted Headcount')
+
+                # 5. Download button
+                st.download_button(
+                    label="📥 Download as Excel",
+                    data=output.getvalue(),
+                    file_name="Unpivoted_Headcount.xlsx",
+                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                )
+
+            export_and_display_unpivoted_headcount(headcount_table, start_year, end_year)
+            
+            # --- New Table Display for Employee-Level Headcount ---
+            st.markdown("---")
             st.markdown(
-                "<h4 style='color:#333;'>📄 Unpivoted Monthly Headcount Table (Long Format)</h4>",
+                f"""
+                <div style='
+                    text-align: center; 
+                    font-family: "Arial", sans-serif; 
+                    font-size: 20px; 
+                    font-weight: bold; 
+                    color: #1A5276; 
+                    margin-bottom: 10px;
+                '>
+                    👤 Detailed Monthly Headcount by Employee ({start_year} - {end_year})
+                </div>
+                """,
                 unsafe_allow_html=True
             )
-            with st.expander(f'📋 View Monthly Headcount Table Unpivoted ({start_year} - {end_year}):'):
-                st.dataframe(unpivoted_df.style.format({'Headcount': '{:,.0f}'}))
-
-            # 4. Export to Excel
-            output = io.BytesIO()
-            with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
-                unpivoted_df.to_excel(writer, index=False, sheet_name='Unpivoted Headcount')
-
-            # 5. Download button
-            st.download_button(
-                label="📥 Download as Excel",
-                data=output.getvalue(),
-                file_name="Unpivoted_Headcount.xlsx",
-                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-            )
-
-        export_and_display_unpivoted_headcount(headcount_table, start_year, end_year)
-
-        # Row space before the table
-        st.markdown("<div style='height: 15px;'></div>", unsafe_allow_html=True)
-        # Minimalist header for monthly headcount
-#         st.markdown(
-#                 f"""
-#                 <div style='
-#                     text-align: center; 
-#                     font-family: "Arial", sans-serif; 
-#                     font-size: 20px; 
-#                     font-weight: bold; 
-#                     color: #333; 
-#                     margin-bottom: 10px;
-#                 '>
-#                     📊 Monthly Headcount by Company ({year})
-#                 </div>
-#                 """,
-#                 unsafe_allow_html=True
+            
+            employee_headcount_table = aggregate_headcount_by_employee_and_month(df, start_year, end_year)
+            
+            with st.expander('📋 View Employee Monthly Headcount Table (1 = Active, 0 = Inactive):'):
+                # Prepare a list of columns for display
+                cols_to_display = ['Περιγραφή εταιρίας', 'Division', 'Department', 'Περιγραφή Θέσης Εργασίας', 'Επώνυμο', 'Ονομα'] + [col for col in employee_headcount_table.columns if any(str(y) in col for y in range(start_year, end_year + 1))]
+                
+                # Check if all required columns are in the dataframe before subsetting
+                final_cols = [c for c in cols_to_display if c in employee_headcount_table.columns]
+                
+                st.dataframe(employee_headcount_table[final_cols])
+            
+            # End of New Table Display
+            
+            # Row space before the table
+            st.markdown("<div style='height: 15px;'></div>", unsafe_allow_html=True)
+            # Minimalist header for monthly headcount
+# 			st.markdown(
+# 				f"""
+# 				<div style='
+# 					text-align: center; 
+# 					font-family: "Arial", sans-serif; 
+# 					font-size: 20px; 
+# 					font-weight: bold; 
+# 					color: #333; 
+# 					margin-bottom: 10px;
+# 				'>
+# 					📊 Monthly Headcount by Company ({year})
+# 				</div>
+# 				""",
+# 				unsafe_allow_html=True
 # )
-#         # Expander for the headcount table
-#         with st.expander('📋 View Headcount Table:'):
-#             st.write(headcount_table)
+# 			# Expander for the headcount table
+# 			with st.expander('📋 View Headcount Table:'):
+# 				st.write(headcount_table)
 
-#         # Minimalist header for division/department-level headcount
-#         st.markdown(
-#             f"""
-#             <div style='
-#                 text-align: center; 
-#                 font-family: "Arial", sans-serif; 
-#                 font-size: 20px; 
-#                 font-weight: bold; 
-#                 color: #333; 
-#                 margin-top: 20px; 
-#                 margin-bottom: 10px;
-#             '>
-#                 🏢 Monthly Headcount by Company, Division, and Department ({year})
-#             </div>
-#             """,
-#             unsafe_allow_html=True
-#         )
+# 			# Minimalist header for division/department-level headcount
+# 			st.markdown(
+# 				f"""
+# 				<div style='
+# 					text-align: center; 
+# 					font-family: "Arial", sans-serif; 
+# 					font-size: 20px; 
+# 					font-weight: bold; 
+# 					color: #333; 
+# 					margin-top: 20px; 
+# 					margin-bottom: 10px;
+# 				'>
+# 					🏢 Monthly Headcount by Company, Division, and Department ({year})
+# 				</div>
+# 				""",
+# 				unsafe_allow_html=True
+# 			)
 
-#         # Row space before the table
-#         st.markdown("<div style='height: 15px;'></div>", unsafe_allow_html=True)
+# 			# Row space before the table
+# 			st.markdown("<div style='height: 15px;'></div>", unsafe_allow_html=True)
 
-#         # Expander for the grouped headcount table
-#         with st.expander('📋 View Detailed Headcount Table:'):
-#             st.write(headcount_Grouped_table)
-
-
-        # Heatmap visualization
-        fig = px.imshow(
-            headcount_table.set_index('Περιγραφή εταιρίας').T,
-            labels={'x': 'Company', 'y': 'Month', 'color': 'Headcount'},
-            title='Monthly Headcount by Company',
-            color_continuous_scale='Blues'
-        )
-        st.plotly_chart(fig)
+# 			# Expander for the grouped headcount table
+# 			with st.expander('📋 View Detailed Headcount Table:'):
+# 				st.write(headcount_Grouped_table)
 
     with tab2:
         #st.header("Salary & Turnover Analysis")
