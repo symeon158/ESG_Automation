@@ -37,14 +37,14 @@ project_7_page = st.Page(
 # --- NEW PAGE: Manpower Budget Info ---
 manpower_info_page = st.Page(
     "views/Manpower Budget Info.py",     # create this file in /views/
-    title="Manpower Budget Info",
+    title="About Manpower Budget",
     icon="💰",
 )
 
 # --- NAVIGATION SETUP ---
 pg = st.navigation(
     {
-        "Info": [about_page],
+        "ESG Info": [about_page],
         "Manpower Budget Info": [manpower_info_page],  # 👈 New top-level
         "ESG": [project_1_page, project_2_page, project_5_page],
         "Manpower Budget": [project_7_page],
@@ -59,6 +59,7 @@ st.sidebar.markdown(
 
 # --- RUN NAVIGATION ---
 pg.run()
+
 
 
 
