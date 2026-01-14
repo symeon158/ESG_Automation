@@ -180,7 +180,7 @@ if f'{COMP_PAGE_KEY}_df' in st.session_state:
         df = df[df['Ονομαστικός μισθός'] > 0]  # Exclude zero salaries
 
         start_of_year = pd.Timestamp(f"{year}-01-01")
-        end_of_year = pd.Timestamp(f"{year}-09-30")
+        end_of_year = pd.Timestamp(f"{year}-12-31")
 
         df_filtered = df[
             (df['Ημ/νία πρόσληψης'] <= end_of_year) & 
@@ -205,7 +205,7 @@ if f'{COMP_PAGE_KEY}_df' in st.session_state:
         df = df.dropna(subset=['Ονομαστικός μισθός'])  # Remove null salary values
         df = df[df['Ονομαστικός μισθός'] > 0]  # Exclude zero salaries
         start_of_2024 = pd.Timestamp(f"{year}-01-01")
-        end_of_2024 = pd.Timestamp(f"{year}-09-30")
+        end_of_2024 = pd.Timestamp(f"{year}-12-31")
         df_2024 = df[
             (df['Ημ/νία πρόσληψης'] <= end_of_2024) & 
             ((df['Ημ/νία αποχώρησης'].isna()) | (df['Ημ/νία αποχώρησης'] >=  start_of_2024))
@@ -1076,3 +1076,4 @@ if f'{COMP_PAGE_KEY}_df' in st.session_state:
 
 else:
     st.write('Please upload a CSV file to proceed.')
+
