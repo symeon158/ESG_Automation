@@ -327,8 +327,8 @@ if st.session_state.df is not None:
                 </div>
             """, unsafe_allow_html=True)
 
-        with st.expander('DataFrame:'):
-            st.write(filtered_df)
+        #with st.expander('DataFrame:'):
+            #st.write(filtered_df)
 
         # st.sidebar.header('Grouping Criteria')
         # group_columns = st.sidebar.multiselect(
@@ -341,8 +341,8 @@ if st.session_state.df is not None:
             grouped_df = grouped_df.sort_values(by='Αριθμός μητρώου', ascending=False)
             grouped_df.rename(columns={'Αριθμός μητρώου': 'Count'}, inplace=True)
             
-            #with st.expander('Grouped DataFrame:'):
-                #st.write(grouped_df)
+            with st.expander('Grouped DataFrame:'):
+                st.write(grouped_df)
 
             if not grouped_df.empty:
                 if len(group_columns) == 1:
@@ -714,4 +714,5 @@ if st.session_state.df is not None:
 
 else:
     st.write('Please upload a CSV file to proceed.')
+
 
